@@ -1,6 +1,9 @@
-import React from "react";
+import React, { use, useState } from "react";
 
-const Users = () => {
+const Users = ({ usersPromise }) => {
+  const initialUsers = use(usersPromise);
+  const [users, setUsers] = useState(initialUsers);
+  console.log(users);
   const handleAddUser = (e) => {
     e.preventDefault();
     const name = e.target.name.value;
@@ -16,12 +19,15 @@ const Users = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if(data.insertedId){
-            alert("Successfully send data to the database !!!")
+        if (data.insertedId) {
+          alert("Successfully send data to the database !!!");
+          newUser._id = data.insertedId;
+          const newUsers = [...users, newUser];
+          setUsers(newUsers);
         }
-        console.log("after send data to the database:",data);
+        console.log("after send data to the database:", data);
       });
-    e.target.reset()
+    e.target.reset();
   };
   return (
     <div>
@@ -33,6 +39,13 @@ const Users = () => {
         <br />
         <input type="submit" value="Add User" />
       </form>
+      <div>
+        {users.map((user) => (
+          <h2 key={user._id}>
+            {user.name} : {user.email}
+          </h2>
+        ))}
+      </div>
     </div>
   );
 };
