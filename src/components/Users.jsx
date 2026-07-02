@@ -4,6 +4,7 @@ const Users = ({ usersPromise }) => {
   const initialUsers = use(usersPromise);
   const [users, setUsers] = useState(initialUsers);
   console.log(users);
+  //addUserhandler
   const handleAddUser = (e) => {
     e.preventDefault();
     const name = e.target.name.value;
@@ -29,8 +30,23 @@ const Users = ({ usersPromise }) => {
       });
     e.target.reset();
   };
+  //deletehandler
+  const handleDeleteButton = (id) => {
+    console.log("delete button clicked", id);
+    fetch(`http://localhost:5000/users/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.deletedCount) {
+          alert("Successfully delete a user from the database");
+        }
+      });
+  };
   return (
     <div>
+      {/* add user form start */}
       <h3>Add A User</h3>
       <form onSubmit={handleAddUser}>
         <input type="text" name="name" id="" />
@@ -39,13 +55,19 @@ const Users = ({ usersPromise }) => {
         <br />
         <input type="submit" value="Add User" />
       </form>
+      {/* add user form end */}
+      <hr />
+      {/* users info start */}
       <div>
+        <h2>Total Users :{users.length}</h2>
         {users.map((user) => (
-          <h2 key={user._id}>
-            {user.name} : {user.email}
-          </h2>
+          <h3 key={user._id}>
+            {user.name} : {user.email}{" "}
+            <button onClick={() => handleDeleteButton(user._id)}>X</button>
+          </h3>
         ))}
       </div>
+        {/* users info end */}
     </div>
   );
 };
